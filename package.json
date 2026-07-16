@@ -1,0 +1,19 @@
+{
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.x.x",
+    "@vitejs/plugin-react": "^4.x.x",
+    "vite": "^6.x.x"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.101.2",
+    "lucide-react": "^1.24.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  }
+}
