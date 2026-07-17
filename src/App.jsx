@@ -27,7 +27,7 @@ function App() {
             <img 
               src={toytasticLogo} 
               alt="Toytastic trade night" 
-              className="object-contain drop-shadow-[0_2px_4px_rgba(239,68,68,0.2)]"
+              className="max-h-[75px] object-contain drop-shadow-[0_2px_4px_rgba(239,68,68,0.2)]"
             />
           </div>
 
@@ -51,7 +51,7 @@ function App() {
             <img 
               src={hollywoodLogo} 
               alt="Hollywood Trading Cards" 
-              className="object-contain drop-shadow-[0_2px_4px_rgba(239,68,68,0.2)]"
+              className="max-h-[75px] object-contain drop-shadow-[0_2px_4px_rgba(239,68,68,0.2)]"
             />
           </a>
         </div>
@@ -148,13 +148,13 @@ function App() {
       </footer>
 
       {/* 4. Sticky Bottom Mobile Navigation Menu */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-[#0f172a]/95 backdrop-blur-md border-t border-slate-800 py-2.5 z-40 shadow-xl">
+      {/* <nav className="fixed bottom-0 left-0 right-0 bg-[#0f172a]/95 backdrop-blur-md border-t border-slate-800 py-2.5 z-40 shadow-xl">
         <div className="max-w-md mx-auto flex justify-center text-center">
           <button className="flex flex-col items-center gap-0.5 text-[#FEBD14]">
             <span className="text-base">📝</span>
             <span className="text-[10px] font-bold tracking-wide uppercase">Sketches</span>
           </button>
-          {/* <button className="flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-200">
+          <button className="flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-200">
             <span className="text-base">📋</span>
             <span className="text-[10px] font-bold tracking-wide uppercase">Rules</span>
           </button>
@@ -165,9 +165,9 @@ function App() {
           <button className="flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-200">
             <span className="text-base">👤</span>
             <span className="text-[10px] font-bold tracking-wide uppercase">My Trades</span>
-          </button> */}
+          </button>
         </div>
-      </nav>
+      </nav> */}
 
       {/* Full-Screen Immersive Lightbox Modal */}
       {selectedImage && (
