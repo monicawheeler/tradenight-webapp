@@ -178,7 +178,7 @@ function App() {
           <div className="relative w-full max-w-sm max-h-[80vh] flex items-center justify-center">
             <img src={selectedImage} className="max-w-full max-h-full object-contain rounded-xl shadow-2xl" alt="Previewed Sketch Card" />
           </div>
-          <p className="text-slate-400 text-xs mt-4 uppercase tracking-widest">Tap anywhere to close layout</p>
+          <p className="text-slate-400 text-xs mt-4 uppercase tracking-widest">Tap anywhere to close</p>
         </div>
       )}
     </div>
