@@ -64,7 +64,7 @@ function App() {
         <div className="text-center mb-5 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 py-3 px-4 rounded-xl border border-slate-800 shadow-inner">
           <p className="text-sm font-extrabold text-slate-100 uppercase tracking-wide">
             <a target="_blank" href="https://tally.so/r/kd1VJd">
-              Upload your card to trade here!
+              Click here to submit your sketch!
             </a>
           </p>
         </div>
