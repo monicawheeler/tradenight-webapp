@@ -12,8 +12,8 @@ function App() {
 
   // Filter items based on user search query
   const filteredData = data.filter(item => 
-    item.Card_Description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.QR_ID?.toString().includes(searchQuery)
+    item['Describe your sketch']?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item['Submission ID']?.toString().includes(searchQuery)
   );
 
   return (
@@ -63,7 +63,9 @@ function App() {
         {/* Call to Action Banner */}
         <div className="text-center mb-5 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 py-3 px-4 rounded-xl border border-slate-800 shadow-inner">
           <p className="text-sm font-extrabold text-slate-100 uppercase tracking-wide">
-            Head over to the Sketch Trading Table to trade!
+            <a target="_blank" href="https://tally.so/r/kd1VJd">
+              Upload your card to trade here!
+            </a>
           </p>
         </div>
 
@@ -84,47 +86,47 @@ function App() {
         {/* 3. Mobile UI optimized Sketch Cards */}
         <div className="space-y-3">
           {filteredData.length > 0 ? (
-            filteredData.map((item, index) => (
+            filteredData.map((item) => (
               <div 
-                key={index} 
-                className="bg-[#111827] border border-slate-800 hover:border-slate-700 p-3 rounded-2xl flex gap-4 shadow-sm items-center transition-all"
+                key={item['Submission ID']} 
+                className="bg-[#111827] border border-slate-800 hover:border-slate-700 p-3 rounded-2xl flex flex-col gap-3 shadow-sm transition-all"
               >
-                {/* Sketch Image Thumbnail Container */}
-                <button 
-                  onClick={() => setSelectedImage(item.Image_Preview)}
-                  className="w-24 h-24 bg-slate-900 rounded-xl overflow-hidden flex-shrink-0 border border-slate-800 relative group active:scale-95 transition-transform"
-                >
-                  <img 
-                    src={item.Image_Preview} 
-                    alt={item.Card_Description} 
-                    className="w-full h-full object-cover" 
-                  />
-                  <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="text-[10px] bg-slate-950/80 px-1.5 py-0.5 rounded text-white">View</span>
-                  </div>
-                </button>
+                <div className="flex gap-3 items-center">
+                  {/* Sketch Image Thumbnail Container */}
+                  <button 
+                    onClick={() => setSelectedImage(item['Upload your sketch'])}
+                    className="w-24 h-24 bg-slate-900 rounded-xl overflow-hidden flex-shrink-0 border border-slate-800 relative group active:scale-95 transition-transform"
+                  >
+                    <img 
+                      src={item['Upload your sketch']} 
+                      alt={item['Describe your sketch']} 
+                      className="w-full h-full object-cover" 
+                    />
+                    <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span className="text-[10px] bg-slate-950/80 px-1.5 py-0.5 rounded text-white">View</span>
+                    </div>
+                  </button>
 
-                {/* Info and Actions Area */}
-                <div className="flex-1 flex flex-col justify-between h-24 py-1">
-                  <div>
-                    <h2 className="text-sm font-bold text-slate-200 line-clamp-1 leading-tight">
-                      {item.Card_Description}
-                    </h2>
-                    <span className="text-[11px] font-mono font-semibold text-[#FEBD14] bg-[#FEBD14]/10 px-2 py-0.5 rounded-md mt-1 inline-block">
-                      #{item.QR_ID}
-                    </span>
-                  </div>
-
-                  {/* Context Callout Action Button Stack */}
-                  <div className="flex gap-2 mt-auto">
+                  {/* Thumb-friendly action buttons */}
+                  <div className="flex flex-col gap-2 flex-1 min-w-0">
                     <button 
-                      onClick={() => setSelectedImage(item.Image_Preview)}
-                      className="border border-slate-700 hover:bg-slate-800 active:scale-95 text-slate-300 font-semibold text-xs px-2.5 py-1.5 rounded-lg transition-all uppercase"
+                      onClick={() => setSelectedImage(item['Upload your sketch'])}
+                      className="w-full border border-slate-700 hover:bg-slate-800 active:scale-95 text-slate-300 font-semibold text-xs px-2.5 py-2 rounded-lg transition-all uppercase"
                     >
                       View Details
                     </button>
+                    {/* <button 
+                      className="w-full bg-[#FEBD14] hover:bg-[#e5aa12] active:scale-95 text-slate-900 font-bold text-xs px-2.5 py-2 rounded-lg transition-all uppercase"
+                    >
+                      I want to trade
+                    </button> */}
                   </div>
                 </div>
+
+                {/* Description footer */}
+                <p className="text-sm font-bold text-slate-200 leading-snug pt-2 border-t border-slate-800">
+                  {item['Describe your sketch']}
+                </p>
               </div>
             ))
           ) : (
