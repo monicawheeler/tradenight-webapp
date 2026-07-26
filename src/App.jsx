@@ -37,11 +37,11 @@ function App() {
 
   if (loading) return <div className="p-6 text-[#FEBD14] text-center bg-slate-950 min-h-screen">Loading Trade Hub...</div>;
 
-  // Filter items based on user search query
+  // Filter items based on user search query, then reverse to show newest submissions first
   const filteredData = data.filter(item => 
     item['Describe your sketch']?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item['Submission ID']?.toString().includes(searchQuery)
-  );
+  ).slice().reverse();
 
   return (
     <div className="bg-[#0b132b] min-h-screen pb-24 text-white font-sans selection:bg-[#FEBD14]/30">
