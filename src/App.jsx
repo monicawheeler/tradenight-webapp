@@ -4,9 +4,36 @@ import hollywoodLogo from './assets/hollywoodlogo.png';
 import toytasticLogo from './assets/plaintoytastic.png';
 
 function App() {
-  const { data, loading } = useInventory();
+  const { data, loading, updatePageStatus } = useInventory();
   const [selectedImage, setSelectedImage] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [updatingId, setUpdatingId] = useState(null);
+
+  const isRequested = (item) =>
+    item.Page_Status === 'PAGE' || item.Page_Status === 'Paged';
+
+  const handleWantThis = async (submissionId, item) => {
+    console.log('[I want this] clicked', {
+      submissionId,
+      submissionIdType: typeof submissionId,
+      currentPageStatus: item?.Page_Status,
+      isRequested: isRequested(item),
+    });
+
+    setUpdatingId(submissionId);
+    try {
+      const result = await updatePageStatus(submissionId);
+      console.log('[I want this] updatePageStatus result', { submissionId, result });
+    } catch (err) {
+      console.error('[I want this] failed to update page status', {
+        submissionId,
+        error: err,
+        message: err?.message,
+      });
+    } finally {
+      setUpdatingId(null);
+    }
+  };
 
   if (loading) return <div className="p-6 text-[#FEBD14] text-center bg-slate-950 min-h-screen">Loading Trade Hub...</div>;
 
@@ -115,11 +142,20 @@ function App() {
                     >
                       View Details
                     </button>
-                    {/* <button 
-                      className="w-full bg-[#FEBD14] hover:bg-[#e5aa12] active:scale-95 text-slate-900 font-bold text-xs px-2.5 py-2 rounded-lg transition-all uppercase"
+                    <button
+                      onClick={() => handleWantThis(item['Submission ID'], item)}
+                      disabled={
+                        isRequested(item) ||
+                        updatingId === item['Submission ID']
+                      }
+                      className="w-full bg-[#FEBD14] hover:bg-[#e5aa12] disabled:bg-slate-700 disabled:text-slate-400 disabled:cursor-not-allowed active:scale-95 text-slate-900 font-bold text-xs px-2.5 py-2 rounded-lg transition-all uppercase"
                     >
-                      I want to trade
-                    </button> */}
+                      {isRequested(item)
+                        ? 'Requested'
+                        : updatingId === item['Submission ID']
+                          ? 'Saving...'
+                          : 'I want this'}
+                    </button>
                   </div>
                 </div>
 
