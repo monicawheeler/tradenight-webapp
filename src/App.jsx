@@ -140,7 +140,7 @@ function App() {
                       onClick={() => setSelectedImage(item['Upload your sketch'])}
                       className="w-full border border-slate-700 hover:bg-slate-800 active:scale-95 text-slate-300 font-semibold text-xs px-2.5 py-2 rounded-lg transition-all uppercase"
                     >
-                      View Details
+                      View Image
                     </button>
                     <button
                       onClick={() => handleWantThis(item['Submission ID'], item)}
