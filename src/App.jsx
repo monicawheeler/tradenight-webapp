@@ -3,9 +3,34 @@ import { useInventory } from './hooks/useInventory';
 import hollywoodLogo from './assets/hollywoodlogo.png';
 import toytasticLogo from './assets/plaintoytastic.png';
 
+// Helper function to handle raw strings, JSON arrays, or comma-separated URLs from Tally / Sheets
+const extractUrls = (val) => {
+  if (!val) return [];
+  if (Array.isArray(val)) {
+    return val.flatMap(extractUrls);
+  }
+  if (typeof val === 'object' && val !== null) {
+    return val.url ? [val.url] : [];
+  }
+  if (typeof val === 'string') {
+    const trimmed = val.trim();
+    if (!trimmed) return [];
+    if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
+      try {
+        return extractUrls(JSON.parse(trimmed));
+      } catch (e) {
+        // Fall back to plain string if JSON parsing fails
+      }
+    }
+    // Handle comma-separated URLs if multiple files are stored in a single cell
+    return trimmed.split(',').map((s) => s.trim()).filter(Boolean);
+  }
+  return [];
+};
+
 function App() {
   const { data, loading, updatePageStatus } = useInventory();
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImages, setSelectedImages] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [updatingId, setUpdatingId] = useState(null);
 
@@ -13,7 +38,7 @@ function App() {
     item.Page_Status === 'PAGE' || item.Page_Status === 'Paged';
 
   const handleWantThis = async (submissionId, item) => {
-    console.log('[I want this] clicked', {
+    console.log('[I\'m interested] clicked', {
       submissionId,
       submissionIdType: typeof submissionId,
       currentPageStatus: item?.Page_Status,
@@ -23,9 +48,9 @@ function App() {
     setUpdatingId(submissionId);
     try {
       const result = await updatePageStatus(submissionId);
-      console.log('[I want this] updatePageStatus result', { submissionId, result });
+      console.log('[I\'m interested] updatePageStatus result', { submissionId, result });
     } catch (err) {
-      console.error('[I want this] failed to update page status', {
+      console.error('[I\'m interested] failed to update page status', {
         submissionId,
         error: err,
         message: err?.message,
@@ -74,7 +99,7 @@ function App() {
           <span className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">
             Sketches Donated by:
           </span>
-            <a target="_blank" href="https://hollywoodtradingcards.com/">
+            <a target="_blank" href="https://hollywoodtradingcards.com/" rel="noreferrer">
             <img 
               src={hollywoodLogo} 
               alt="Hollywood Trading Cards" 
@@ -90,7 +115,7 @@ function App() {
         {/* Call to Action Banner */}
         <div className="text-center mb-5 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 py-3 px-4 rounded-xl border border-slate-800 shadow-inner">
           <p className="text-sm font-extrabold text-slate-100 uppercase tracking-wide">
-            <a target="_blank" href="https://tally.so/r/kd1VJd">
+            <a target="_blank" href="https://tally.so/r/kd1VJd" rel="noreferrer">
               Upload your card to trade here!
             </a>
           </p>
@@ -113,58 +138,94 @@ function App() {
         {/* 3. Mobile UI optimized Sketch Cards */}
         <div className="space-y-3">
           {filteredData.length > 0 ? (
-            filteredData.map((item) => (
-              <div 
-                key={item['Submission ID']} 
-                className="bg-[#111827] border border-slate-800 hover:border-slate-700 p-3 rounded-2xl flex flex-col gap-3 shadow-sm transition-all"
-              >
-                <div className="flex gap-3 items-center">
-                  {/* Sketch Image Thumbnail Container */}
-                  <button 
-                    onClick={() => setSelectedImage(item['Upload your sketch'])}
-                    className="w-24 h-24 bg-slate-900 rounded-xl overflow-hidden flex-shrink-0 border border-slate-800 relative group active:scale-95 transition-transform"
-                  >
-                    <img 
-                      src={item['Upload your sketch']} 
-                      alt={item['Describe your sketch']} 
-                      className="w-full h-full object-cover" 
-                    />
-                    <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <span className="text-[10px] bg-slate-950/80 px-1.5 py-0.5 rounded text-white">View</span>
-                    </div>
-                  </button>
+            filteredData.map((item) => {
+              // Primary sketch images
+              const firstImages = extractUrls(item['Upload your sketch']);
 
-                  {/* Thumb-friendly action buttons */}
-                  <div className="flex flex-col gap-2 flex-1 min-w-0">
+              // Dynamically check potential key variations for the second image to avoid undefined mismatches
+              const secondImageKey = Object.keys(item).find(
+                key => key.trim().toLowerCase() === 'second image' || key.trim().toLowerCase() === 'secondimage'
+              );
+              const rawSecond = secondImageKey ? item[secondImageKey] : null;
+              const secondImages = extractUrls(rawSecond);
+
+              // Fallback: if multiple files were uploaded inside the main sketch field directly
+              const allImages = firstImages.length > 1 && secondImages.length === 0 
+                ? firstImages 
+                : [...firstImages, ...secondImages];
+
+              const thumbnailSrc = allImages[0];
+
+              const handleViewImages = () => {
+                console.log('--- DEBUG ITEM CLICKED ---', {
+                  submissionId: item['Submission ID'],
+                  description: item['Describe your sketch'],
+                  detectedSecondImageKey: secondImageKey || 'NOT FOUND',
+                  rawSecondImageValue: rawSecond,
+                  allImagesCombined: allImages,
+                  fullItemKeys: Object.keys(item),
+                  fullItemObject: item
+                });
+                setSelectedImages(allImages);
+              };
+
+              return (
+                <div 
+                  key={item['Submission ID']} 
+                  className="bg-[#111827] border border-slate-800 hover:border-slate-700 p-3 rounded-2xl flex flex-col gap-3 shadow-sm transition-all"
+                >
+                  <div className="flex gap-3 items-center">
+                    {/* Sketch Image Thumbnail Container */}
                     <button 
-                      onClick={() => setSelectedImage(item['Upload your sketch'])}
-                      className="w-full border border-slate-700 hover:bg-slate-800 active:scale-95 text-slate-300 font-semibold text-xs px-2.5 py-2 rounded-lg transition-all uppercase"
+                      onClick={handleViewImages}
+                      className="w-24 h-24 bg-slate-900 rounded-xl overflow-hidden flex-shrink-0 border border-slate-800 relative group active:scale-95 transition-transform"
                     >
-                      View Image
+                      {thumbnailSrc ? (
+                        <img 
+                          src={thumbnailSrc} 
+                          alt={item['Describe your sketch'] || 'Sketch Card'} 
+                          className="w-full h-full object-cover" 
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-slate-600 text-xs">No Image</div>
+                      )}
+                      <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span className="text-[10px] bg-slate-950/80 px-1.5 py-0.5 rounded text-white">View</span>
+                      </div>
                     </button>
-                    <button
-                      onClick={() => handleWantThis(item['Submission ID'], item)}
-                      disabled={
-                        isRequested(item) ||
-                        updatingId === item['Submission ID']
-                      }
-                      className="w-full bg-[#FEBD14] hover:bg-[#e5aa12] disabled:bg-slate-700 disabled:text-slate-400 disabled:cursor-not-allowed active:scale-95 text-slate-900 font-bold text-xs px-2.5 py-2 rounded-lg transition-all uppercase"
-                    >
-                      {isRequested(item)
-                        ? 'Requested'
-                        : updatingId === item['Submission ID']
-                          ? 'Saving...'
-                          : 'I want this'}
-                    </button>
-                  </div>
-                </div>
 
-                {/* Description footer */}
-                <p className="text-sm font-bold text-slate-200 leading-snug pt-2 border-t border-slate-800">
-                  {item['Describe your sketch']}
-                </p>
-              </div>
-            ))
+                    {/* Thumb-friendly action buttons */}
+                    <div className="flex flex-col gap-2 flex-1 min-w-0">
+                      <button 
+                        onClick={handleViewImages}
+                        className="w-full border border-slate-700 hover:bg-slate-800 active:scale-95 text-slate-300 font-semibold text-xs px-2.5 py-2 rounded-lg transition-all uppercase"
+                      >
+                        View Image(s)
+                      </button>
+                      <button
+                        onClick={() => handleWantThis(item['Submission ID'], item)}
+                        disabled={
+                          isRequested(item) ||
+                          updatingId === item['Submission ID']
+                        }
+                        className="w-full bg-[#FEBD14] hover:bg-[#e5aa12] disabled:bg-slate-700 disabled:text-slate-400 disabled:cursor-not-allowed active:scale-95 text-slate-900 font-bold text-xs px-2.5 py-2 rounded-lg transition-all uppercase"
+                      >
+                        {isRequested(item)
+                          ? 'Requested'
+                          : updatingId === item['Submission ID']
+                            ? 'Owner has been paged'
+                            : 'I\'m interested'}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Description footer */}
+                  <p className="text-sm font-bold text-slate-200 leading-snug pt-2 border-t border-slate-800">
+                    {item['Describe your sketch']}
+                  </p>
+                </div>
+              );
+            })
           ) : (
             <div className="text-center py-12 text-slate-500 text-sm">
               No matching sketches available right now.
@@ -185,38 +246,27 @@ function App() {
         </a>
       </footer>
 
-      {/* 4. Sticky Bottom Mobile Navigation Menu */}
-      {/* <nav className="fixed bottom-0 left-0 right-0 bg-[#0f172a]/95 backdrop-blur-md border-t border-slate-800 py-2.5 z-40 shadow-xl">
-        <div className="max-w-md mx-auto flex justify-center text-center">
-          <button className="flex flex-col items-center gap-0.5 text-[#FEBD14]">
-            <span className="text-base">📝</span>
-            <span className="text-[10px] font-bold tracking-wide uppercase">Sketches</span>
-          </button>
-          <button className="flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-200">
-            <span className="text-base">📋</span>
-            <span className="text-[10px] font-bold tracking-wide uppercase">Rules</span>
-          </button>
-          <button className="flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-200">
-            <span className="text-base">🗺️</span>
-            <span className="text-[10px] font-bold tracking-wide uppercase">Map</span>
-          </button>
-          <button className="flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-200">
-            <span className="text-base">👤</span>
-            <span className="text-[10px] font-bold tracking-wide uppercase">My Trades</span>
-          </button>
-        </div>
-      </nav> */}
-
       {/* Full-Screen Immersive Lightbox Modal */}
-      {selectedImage && (
+      {selectedImages && selectedImages.length > 0 && (
         <div 
-          className="fixed inset-0 bg-slate-950/95 z-50 flex flex-col items-center justify-center p-4"
-          onClick={() => setSelectedImage(null)}
+          className="fixed inset-0 bg-slate-950/95 z-50 flex flex-col items-center justify-center p-4 overflow-y-auto"
+          onClick={() => setSelectedImages(null)}
         >
-          <div className="relative w-full max-w-sm max-h-[80vh] flex items-center justify-center">
-            <img src={selectedImage} className="max-w-full max-h-full object-contain rounded-xl shadow-2xl" alt="Previewed Sketch Card" />
+          <div className="relative w-full max-w-sm flex flex-col gap-5 items-center justify-center my-auto py-6">
+            {selectedImages.map((imgUrl, index) => (
+              <div key={index} className="w-full flex flex-col items-center">
+                <span className="text-xs font-bold text-[#FEBD14] mb-1.5 uppercase tracking-wider bg-slate-900/80 px-2.5 py-1 rounded border border-slate-800">
+                  {index === 0 ? 'Front / Sketch' : `Second Image`}
+                </span>
+                <img 
+                  src={imgUrl} 
+                  className="max-w-full max-h-[38vh] object-contain rounded-xl shadow-2xl border border-slate-800 bg-black/40" 
+                  alt={`Previewed Card Image ${index + 1}`} 
+                />
+              </div>
+            ))}
           </div>
-          <p className="text-slate-400 text-xs mt-4 uppercase tracking-widest">Tap anywhere to close</p>
+          <p className="text-slate-400 text-xs mt-2 uppercase tracking-widest flex-shrink-0 pb-4">Tap anywhere to close</p>
         </div>
       )}
     </div>
