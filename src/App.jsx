@@ -112,12 +112,18 @@ function App() {
       {/* Main Content Container */}
       <main className="max-w-md mx-auto px-4 pt-5">
         
-        {/* Call to Action Banner */}
-        <div className="text-center mb-5 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 py-3 px-4 rounded-xl border border-slate-800 shadow-inner">
-          <p className="text-sm font-extrabold text-slate-100 uppercase tracking-wide">
-            <a target="_blank" href="https://tally.so/r/kd1VJd" rel="noreferrer">
-              Upload your card to trade here!
-            </a>
+        {/* Call to Action Upload Button */}
+        <div className="mb-5 text-center">
+          <a 
+            target="_blank" 
+            href="https://tally.so/r/kd1VJd" 
+            rel="noreferrer"
+            className="w-full bg-gradient-to-r from-[#FEBD14] to-[#e5aa12] hover:from-[#feca2f] hover:to-[#f1b415] text-slate-950 font-extrabold text-sm py-3.5 px-4 rounded-xl shadow-lg hover:shadow-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 border border-yellow-400/30 uppercase tracking-wide group"
+          >
+            <span>Upload Your Sketch to Trade</span>
+          </a>
+          <p className="text-[11px] text-slate-400 mt-1.5 font-medium">
+            Got a card to trade? Tap here to submit it to the hub!
           </p>
         </div>
 
