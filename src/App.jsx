@@ -82,22 +82,12 @@ function App() {
               className="max-h-[75px] object-contain drop-shadow-[0_2px_4px_rgba(239,68,68,0.2)]"
             />
           </div>
-
-          {/* Event Context */}
-          <div className="text-right border-l border-slate-700 pl-4">
-            <h1 className="text-xs font-bold tracking-widest text-slate-200 uppercase">
-              Nationals
-            </h1>
-            <p className="text-[10px] font-bold text-[#FEBD14] uppercase tracking-wider">
-              Sketch Trade Hub
-            </p>
-          </div>
         </div>
 
         {/* Sponsor/Donation Sub-Header using your asset */}
         <div className="max-w-md mx-auto mt-3 pt-2 border-t border-slate-800/60 flex items-center justify-center gap-3">
           <span className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">
-            Sketches Donated by:
+            Big thanks to
           </span>
             <a target="_blank" href="https://hollywoodtradingcards.com/" rel="noreferrer">
             <img 
@@ -111,35 +101,6 @@ function App() {
 
       {/* Main Content Container */}
       <main className="max-w-md mx-auto px-4 pt-5">
-        
-        {/* Call to Action Upload Button */}
-        <div className="mb-5 text-center">
-          <a 
-            target="_blank" 
-            href="https://tally.so/r/kd1VJd" 
-            rel="noreferrer"
-            className="w-full bg-gradient-to-r from-[#FEBD14] to-[#e5aa12] hover:from-[#feca2f] hover:to-[#f1b415] text-slate-950 font-extrabold text-sm py-3.5 px-4 rounded-xl shadow-lg hover:shadow-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 border border-yellow-400/30 uppercase tracking-wide group"
-          >
-            <span>Upload Your Sketch to Trade</span>
-          </a>
-          <p className="text-[11px] text-slate-400 mt-1.5 font-medium">
-            Got a card to trade? Tap here to submit it to the hub!
-          </p>
-        </div>
-
-        {/* 2. Utility & Search Area */}
-        <div className="mb-4 flex gap-2">
-          <div className="relative flex-1">
-            <input 
-              type="text" 
-              placeholder="Search by description ..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#1e293b] text-sm text-slate-200 pl-10 pr-4 py-2.5 rounded-xl border border-slate-700 focus:outline-none focus:border-[#FEBD14] focus:ring-1 focus:ring-[#FEBD14] transition-all"
-            />
-            <span className="absolute left-3 top-3.5 text-slate-400 text-xs">🔍</span>
-          </div>
-        </div>
 
         {/* 3. Mobile UI optimized Sketch Cards */}
         <div className="space-y-3">
@@ -208,20 +169,6 @@ function App() {
                       >
                         View Image(s)
                       </button>
-                      <button
-                        onClick={() => handleWantThis(item['Submission ID'], item)}
-                        disabled={
-                          isRequested(item) ||
-                          updatingId === item['Submission ID']
-                        }
-                        className="w-full bg-[#FEBD14] hover:bg-[#e5aa12] disabled:bg-slate-700 disabled:text-slate-400 disabled:cursor-not-allowed active:scale-95 text-slate-900 font-bold text-xs px-2.5 py-2 rounded-lg transition-all uppercase"
-                      >
-                        {isRequested(item)
-                          ? 'Requested'
-                          : updatingId === item['Submission ID']
-                            ? 'Owner has been paged'
-                            : 'I\'m interested'}
-                      </button>
                     </div>
                   </div>
 
@@ -234,7 +181,10 @@ function App() {
             })
           ) : (
             <div className="text-center py-12 text-slate-500 text-sm">
-              No matching sketches available right now.
+              This app is closed for submissions.
+            <p className="text-center text-slate-500 text-sm">
+              Thanks for attending Trade Night!
+              </p>
             </div>
           )}
         </div>
